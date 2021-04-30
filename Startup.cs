@@ -29,7 +29,7 @@ namespace Prueba_Watson
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-    
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -38,12 +38,29 @@ namespace Prueba_Watson
 
             services.AddDbContext<Prueba_WatsonContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("Prueba_WatsonContext")));
+
+            services.AddControllersWithViews()
+                    .AddNewtonsoftJson(options =>
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                );
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                    name: "AllowOrigin",
+                    builder => {
+                        builder.AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
+                    });
+            });
         }
-    
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors("AllowOrigin");
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -66,6 +83,8 @@ namespace Prueba_Watson
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Api Caduca REST");
             });
+
+           
         }
     }
 }

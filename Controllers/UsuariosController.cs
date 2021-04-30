@@ -28,10 +28,11 @@ namespace Prueba_Watson.Controllers
         }
 
         // GET: api/Usuarios/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Usuario>> GetUsuario(int id)
+        [HttpGet("{Username}/{Clave}")]
+        public async Task<ActionResult<Usuario>> GetUsuario(string Username, string Clave)
         {
-            var usuario = await _context.Usuario.FindAsync(id);
+            var usuario =  _context.Usuario.Where(b=>b.Username== Username && b.Clave==Clave).FirstOrDefault();
+            
 
             if (usuario == null)
             {
